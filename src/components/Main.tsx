@@ -9,16 +9,61 @@ interface State {
 export default class Main extends Component<{}, State> {
   state = {
     newTask: '',
-    tasks: [
-      'Make coffee',
-      'Drink water',
-      'Study'
-    ]
+    tasks: [''],
   };
 
   updateState = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ newTask: e.target.value });
   }
+
+  handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { tasks } = this.state;
+    let { newTask } = this.state;
+    newTask = newTask.trim();
+    if (newTask && !tasks.includes(newTask)) {
+      this.setState({ tasks: [...tasks, newTask], newTask: '' })
+    }
+  }
+
+  deleteTask = (e: React.MouseEvent<SVGElement, MouseEvent>, index: number) => {
+    const { tasks } = this.state;
+    const newTasks = [...tasks]
+
+    newTasks.splice(index, 1)
+
+    this.setState({
+      tasks: [...newTasks]
+    })
+  }
+
+  editTask = (e: React.MouseEvent<SVGElement, MouseEvent>, index: number) => {
+
+  }
+
+  createTaskLi(task: string, index: number) {
+    if(task !== '') {
+      return <li key = {task}>
+      {task}
+      <span>
+        <FaEdit
+          onClick={ (e) => this.editTask(e, index) }
+          className='edit'
+        />
+
+        <FaWindowClose
+          onClick={ (e) => this.deleteTask(e, index) }
+          className='delete'
+        />
+
+      </span>
+    </li>
+    }
+    else {
+      return
+    }
+  }
+
   render() {
     const { newTask, tasks } = this.state
 
@@ -26,7 +71,7 @@ export default class Main extends Component<{}, State> {
       <div className='main'>
         <h1>To-do List</h1>
 
-        <form action='#' className='task-form'>
+        <form  onSubmit={this.handleSubmit} action='#' className='task-form'>
           <input
             onChange= {this.updateState}
             type='text'
@@ -38,15 +83,7 @@ export default class Main extends Component<{}, State> {
         </form>
 
         <ul className='tasks'>
-          {tasks.map(task => (
-            <li key = {task}>
-              {task}
-              <div>
-                <FaEdit className='edit'/>
-                <FaWindowClose className='delete'/>
-              </div>
-            </li>
-          ))}
+          {tasks.map((task, index) => (this.createTaskLi(task, index)))}
         </ul>
       </div>
     );

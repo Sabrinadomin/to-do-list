@@ -52,3 +52,8 @@
 .tasks li .edit:hover, .delete:hover {
   cursor: pointer;
 }
+
+.tasks li span {
+  display: flex;
+  align-items: center;
+}
